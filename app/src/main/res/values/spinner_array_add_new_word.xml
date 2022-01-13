@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="parts_of_speech">
+        <item> Noun </item>
+        <item> Verb </item>
+        <item> Adj </item>
+        <item> Adv </item>
+        <item> preposition </item>
+        <item> conjunction </item>
+        <item> interjection </item>
+    </string-array>
+</resources>

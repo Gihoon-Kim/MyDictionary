@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuItemAddWord"
+        android:title="@string/add_word" />
+
+    <item
+        android:id="@+id/menuItemSetting"
+        android:title="@string/setting" />
+
+    <item
+        android:id="@+id/menuItemDeveloperInfo"
+        android:title="@string/developer_info" />
+</menu>

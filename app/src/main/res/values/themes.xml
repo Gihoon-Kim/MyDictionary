@@ -18,8 +18,4 @@
         <item name="android:divider">#000000</item> <!-- Divider Color -->
         <item name="android:dividerHeight">2dp</item> <!-- Divider Height -->
     </style>
-
-    <style name="SpinnerTheme" parent="Theme.AppCompat">
-        <item name="android:dropDownListViewStyle">@style/SpinnerDivideStyle</item>
-    </style>
 </resources>

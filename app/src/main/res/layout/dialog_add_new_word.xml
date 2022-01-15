@@ -44,6 +44,7 @@
         android:layout_marginBottom="10dp" >
 
         <EditText
+            android:id="@+id/et_Word"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -59,6 +60,7 @@
             android:background="@drawable/spinner_background"/>
 
         <EditText
+            android:id="@+id/et_Meaning"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

@@ -2,7 +2,10 @@ package com.hoonydictionary.mydictionary.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,14 +17,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hoonydictionary.mydictionary.R;
+import com.hoonydictionary.mydictionary.itemdata.WordsList;
+
+import java.util.ArrayList;
 
 public class AddNewWordDialog {
 
+    private final static String TAG = "Add New Word Dialog";
     private final Context m_Context;
+    private ArrayList<WordsList> m_WordsArrayList;
 
     // to give specific IDs to new dynamically created spinner and EditText
-    int spinnerIdNum = 0;
-    int editTextIdNum = 0;
+    // Spinner id is odd, and EditTextId is even
+    int m_NewViewIdNum = 1;
 
     public AddNewWordDialog(Context m_Context) {
 
@@ -29,7 +37,9 @@ public class AddNewWordDialog {
     }
 
     @SuppressLint({"WrongConstant", "ResourceType"})
-    public void CallDialog() {
+    public void CallDialog(SQLiteDatabase database, ArrayList<WordsList> m_WordsArrayList) {
+
+        this.m_WordsArrayList = m_WordsArrayList;
 
         // Spinner option to attach on Spinner
         String[] m_SpinnerOptions = m_Context.getResources().getStringArray(R.array.parts_of_speech);
@@ -61,14 +71,19 @@ public class AddNewWordDialog {
         // create new TextView and Spinner dynamically
         btnAddNewMeaning.setOnClickListener(
                 onClickAddNewMeaning(
-                    spinnerAdapter,
-                    dialog,
-                    spinner
+                        spinnerAdapter,
+                        dialog,
+                        spinner
                 )
         );
 
         Button btnAddNewWord = dialog.findViewById(R.id.btnAddNewWord);
-        btnAddNewWord.setOnClickListener(onClickAddNewWord());
+        btnAddNewWord.setOnClickListener(
+                onClickAddNewWord(
+                        database,
+                        dialog
+                )
+        );
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(view -> dialog.dismiss());
 
@@ -102,13 +117,12 @@ public class AddNewWordDialog {
             Spinner newSpinner = new Spinner(m_Context);
             newSpinner.setAdapter(spinnerAdapter);
             newSpinner.setBackground(spinner.getBackground());
-            newSpinner.setId(spinnerIdNum);
-            spinnerIdNum++;
+            newSpinner.setId(m_NewViewIdNum++);
+            newSpinner.setSelection(0);
 
             EditText newEditText = new EditText(m_Context);
             newEditText.setLayoutParams(newParam);
-            newEditText.setId(editTextIdNum);
-            editTextIdNum++;
+            newEditText.setId(m_NewViewIdNum++);
 
             newSpinner.setLayoutParams(newParam);
             newLinearLayout.addView(newTextView);
@@ -117,10 +131,41 @@ public class AddNewWordDialog {
         };
     }
 
-    private View.OnClickListener onClickAddNewWord() {
+    private View.OnClickListener onClickAddNewWord(SQLiteDatabase database, Dialog dialog) {
 
         return view -> {
             // TODO : put data into database and ArrayList of the Main Activity
+
+            // Content for database Words
+            ContentValues contentValuesForWord = new ContentValues();
+            contentValuesForWord.put("word", ((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
+            database.insert("WORDS", null, contentValuesForWord);
+            WordsList newWord = new WordsList(((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
+            m_WordsArrayList.add(newWord);
+
+            // Content for database Means
+            ContentValues contentValuesForMean = new ContentValues();
+            contentValuesForMean.put("WORD", ((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
+            contentValuesForMean.put("POS", ((Spinner) dialog.findViewById(R.id.spinner_part_of_speech)).getSelectedItem().toString());
+            contentValuesForMean.put("MEAN", ((EditText) dialog.findViewById(R.id.et_Meaning)).getText().toString());
+            database.insert("MEANS", null, contentValuesForMean);
+
+            // if more meaning and part of speeches are there, they also are added.
+            if (m_NewViewIdNum > 2) {
+
+                for (int i = 1; i < m_NewViewIdNum; i += 2) {
+
+                    ContentValues contentValuesForMoreData = new ContentValues();
+
+                    contentValuesForMoreData.put("WORD", ((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
+                    contentValuesForMoreData.put("POS", ((Spinner) dialog.findViewById(i)).getSelectedItem().toString());
+                    contentValuesForMoreData.put("MEAN", ((EditText) dialog.findViewById(i + 1)).getText().toString());
+
+                    database.insert("MEANS", null, contentValuesForMoreData);
+                }
+            }
+
+            dialog.dismiss();
         };
     }
 }

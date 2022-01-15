@@ -16,7 +16,12 @@ import java.util.ArrayList;
 public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainActivityRecyclerViewAdapter.ItemViewHolder> {
 
     // List for adapter
-    private ArrayList<WordsList> itemList = new ArrayList<>();
+    private final ArrayList<WordsList> itemList;
+
+    public MainActivityRecyclerViewAdapter(ArrayList<WordsList> m_WordsArrayList) {
+
+        this.itemList = m_WordsArrayList;
+    }
 
     @NonNull
     @Override
@@ -40,14 +45,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         return itemList.size();
     }
 
-    void addWord(WordsList wordsList) {
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        itemList.add(wordsList);
-    }
-
-    class ItemViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView tv_Word;
+        private final TextView tv_Word;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);

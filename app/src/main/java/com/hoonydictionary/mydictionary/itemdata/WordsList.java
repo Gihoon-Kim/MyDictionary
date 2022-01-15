@@ -4,6 +4,11 @@ public class WordsList {
 
     private String m_Word;
 
+    public WordsList(String m_Word) {
+
+        set_m_Word(m_Word);
+    }
+
     public String get_m_Word() {
         return m_Word;
     }

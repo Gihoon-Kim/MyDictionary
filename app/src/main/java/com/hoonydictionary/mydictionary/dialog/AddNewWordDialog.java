@@ -3,6 +3,7 @@ package com.hoonydictionary.mydictionary.dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,10 @@ public class AddNewWordDialog {
 
     private final Context m_Context;
 
+    // to give specific IDs to new dynamically created spinner and EditText
+    int spinnerIdNum = 0;
+    int editTextIdNum = 0;
+
     public AddNewWordDialog(Context m_Context) {
 
         this.m_Context = m_Context;
@@ -28,6 +33,7 @@ public class AddNewWordDialog {
 
         // Spinner option to attach on Spinner
         String[] m_SpinnerOptions = m_Context.getResources().getStringArray(R.array.parts_of_speech);
+
         // ArrayAdapter for spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 m_Context,
@@ -47,13 +53,30 @@ public class AddNewWordDialog {
         dialog.getWindow().setAttributes(params);
 
         Spinner spinner = dialog.findViewById(R.id.spinner_part_of_speech);
-        Button btnAddNewWord = dialog.findViewById(R.id.btnAddNewWord);
+        Button btnAddNewMeaning = dialog.findViewById(R.id.btnAddNewMeaning);
 
         // Attach Adapter to spinner
         spinner.setAdapter(spinnerAdapter);
 
         // create new TextView and Spinner dynamically
-        btnAddNewWord.setOnClickListener(view -> {
+        btnAddNewMeaning.setOnClickListener(
+                onClickAddNewMeaning(
+                    spinnerAdapter,
+                    dialog,
+                    spinner
+                )
+        );
+
+        Button btnAddNewWord = dialog.findViewById(R.id.btnAddNewWord);
+        btnAddNewWord.setOnClickListener(onClickAddNewWord());
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(view -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private View.OnClickListener onClickAddNewMeaning(ArrayAdapter<String> spinnerAdapter, Dialog dialog, Spinner spinner) {
+        return view -> {
 
             LinearLayout linearLayout = dialog.findViewById(R.id.llParentNewViews);
 
@@ -79,17 +102,25 @@ public class AddNewWordDialog {
             Spinner newSpinner = new Spinner(m_Context);
             newSpinner.setAdapter(spinnerAdapter);
             newSpinner.setBackground(spinner.getBackground());
+            newSpinner.setId(spinnerIdNum);
+            spinnerIdNum++;
 
             EditText newEditText = new EditText(m_Context);
             newEditText.setLayoutParams(newParam);
+            newEditText.setId(editTextIdNum);
+            editTextIdNum++;
 
             newSpinner.setLayoutParams(newParam);
             newLinearLayout.addView(newTextView);
             newLinearLayout.addView(newSpinner);
             newLinearLayout.addView(newEditText);
-        });
+        };
+    }
 
+    private View.OnClickListener onClickAddNewWord() {
 
-        dialog.show();
+        return view -> {
+            // TODO : put data into database and ArrayList of the Main Activity
+        };
     }
 }

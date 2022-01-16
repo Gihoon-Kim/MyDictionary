@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     DBHelper dbHelper;
     SQLiteDatabase database;
 
+    // For bottom sheet Dialog
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting RecyclerView
         // Adapter for RecyclerView(rvMainWords)
-        mainActivityRecyclerViewAdapter = new MainActivityRecyclerViewAdapter(m_WordsArrayList);
+        fragmentManager = getSupportFragmentManager();
+        mainActivityRecyclerViewAdapter = new MainActivityRecyclerViewAdapter(m_WordsArrayList, getApplicationContext(), fragmentManager);
         rvMainWords.setLayoutManager(new LinearLayoutManager(this));
         rvMainWords.setAdapter(mainActivityRecyclerViewAdapter);
 
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         m_Cursor.close();
+        database.close();
     }
 
     // Add Menu

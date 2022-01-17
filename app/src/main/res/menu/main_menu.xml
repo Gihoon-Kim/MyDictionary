@@ -7,6 +7,10 @@
         android:title="@string/add_word" />
 
     <item
+        android:id="@+id/menuItemDeleteWord"
+        android:title="@string/delete_word" />
+
+    <item
         android:id="@+id/menuItemSetting"
         android:title="@string/setting" />
 

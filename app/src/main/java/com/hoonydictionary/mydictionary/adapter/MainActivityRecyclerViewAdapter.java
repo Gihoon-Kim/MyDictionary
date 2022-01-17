@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,18 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
 
+        // The check status values (T/F) of the checkbox does not change only when it is declared as final
+        final WordsList wordsList = itemList.get(position);
+
+        // initialization listener of checkbox to null
+        holder.cb_CheckBox.setOnCheckedChangeListener(null);
+        // Get check value through getter of the model class, then set this value through setter into checkbox of an item
+        holder.cb_CheckBox.setChecked(wordsList.getChecked());
+        // Attach a listener to find out the status of the check box.
+        holder.cb_CheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
+
+            wordsList.setChecked(b);
+        });
         // Show item one by one
         holder.onBind(itemList.get(position));
     }
@@ -67,17 +81,34 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         return itemList.size();
     }
 
+    // Delete Item Method
+    public void removeWord(int position) {
+
+        itemList.remove(position);
+        notifyItemRemoved(position);
+        notifyDataSetChanged();
+    }
+
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tv_Word;
+        private final CheckBox cb_CheckBox;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tv_Word = itemView.findViewById(R.id.tvRecyclerViewItem);
+            cb_CheckBox = itemView.findViewById(R.id.cb_CheckBox);
 
             // Click Event for Recycler View
             itemView.setOnClickListener(onAdapterItemClickListener());
+            cb_CheckBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    cb_CheckBox.setChecked(cb_CheckBox.isChecked());
+                }
+            });
         }
 
         void onBind(WordsList wordsList) {

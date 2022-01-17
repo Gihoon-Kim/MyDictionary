@@ -1,6 +1,10 @@
 package com.hoonydictionary.mydictionary.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -92,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         m_Cursor.close();
-        database.close();
     }
 
     // Add Menu
@@ -114,18 +118,58 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuItemAddWord:
 
                 database = dbHelper.getWritableDatabase();
-                // TODO : set click event for menu Item : Add Word
                 AddNewWordDialog addNewWordDialog = new AddNewWordDialog(this);
                 addNewWordDialog.CallDialog(database, m_WordsArrayList);
                 mainActivityRecyclerViewAdapter.notifyDataSetChanged();
                 return true;
+
+            case R.id.menuItemDeleteWord:
+
+                // to get positions of checked items
+                ArrayList<Integer> m_Position = new ArrayList<>();
+                int m_NumCheckedBox = 0;
+                for (int i = 0; i < m_WordsArrayList.size(); i++) {
+
+                    if (m_WordsArrayList.get(i).getChecked()) {
+
+                        m_Position.add(i);
+                        m_NumCheckedBox++;
+                    }
+                }
+
+                if (m_NumCheckedBox == 0) {
+
+                    Toast.makeText(this, "An word is not selected", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Delete Words").setMessage("Do you really want to delete " + m_NumCheckedBox + "Words?");
+                    int final_m_NumCheckedBox = m_NumCheckedBox;
+                    builder.setPositiveButton("Yes", (dialogInterface, i) -> {
+
+                        for (int itemCount = final_m_NumCheckedBox; itemCount > 0; itemCount--) {
+
+                            // Delete Item from Database
+                            database.execSQL(
+                                    "DELETE " +
+                                    "FROM WORDS " +
+                                    "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
+                            // Delete Item from List
+                            m_WordsArrayList.remove(m_WordsArrayList.get(m_Position.get(itemCount - 1)));
+                        }
+
+                        mainActivityRecyclerViewAdapter.notifyDataSetChanged();
+                    }).setNegativeButton("Cancel", null);
+
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
             case R.id.menuItemSetting:
 
                 // TODO : set click event for menu Item : Setting
                 return true;
             default:
 
-                // TODO : set click event for menu Item : Developer Info
                 DeveloperInfoDialog developerInfoDialog = new DeveloperInfoDialog(this);
                 developerInfoDialog.CallDialog();
                 return true;
@@ -136,5 +180,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         database.close();
+    }
+
+    // If the screen is rotated, keep the checkbox status
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

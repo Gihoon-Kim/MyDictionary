@@ -14,4 +14,5 @@
     <string name="meaning">Meaning</string>
     <string name="add_new_word">Add New Word</string>
     <string name="cancel">Cancel</string>
+    <string name="delete_word">Delete Word</string>
 </resources>

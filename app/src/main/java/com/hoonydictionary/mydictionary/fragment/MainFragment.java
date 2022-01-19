@@ -1,8 +1,7 @@
-package com.hoonydictionary.mydictionary.dialog;
+package com.hoonydictionary.mydictionary.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,26 +9,25 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.hoonydictionary.mydictionary.R;
 import com.hoonydictionary.mydictionary.adapter.BottomSheetDialogAdapter;
+import com.hoonydictionary.mydictionary.adapter.FragmentRecyclerViewAdapter;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
 
 import java.util.ArrayList;
 
-public class WordBottomSheetDialog extends BottomSheetDialogFragment {
+public class MainFragment extends Fragment {
 
     private Context m_Context;
     private WordsList m_WordsList;
     private ArrayList<String> m_ArrayListPOS;
     private ArrayList<String> m_ArrayListMean;
 
-    // Dialog Adapter for Recycler View of the Dialog
-
-    public WordBottomSheetDialog(Context context, WordsList wordsList, ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
+    public MainFragment(Context context, WordsList wordsList, ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
 
         this.m_Context = context;
         this.m_WordsList = wordsList;
@@ -41,15 +39,15 @@ public class WordBottomSheetDialog extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        BottomSheetDialogAdapter adapter = new BottomSheetDialogAdapter( m_ArrayListPOS, m_ArrayListMean);
+        FragmentRecyclerViewAdapter adapter = new FragmentRecyclerViewAdapter( m_ArrayListPOS, m_ArrayListMean);
 
-        View view = inflater.inflate(R.layout.dialog_bottom_sheet_item_click, container, false);
+        View view = inflater.inflate(R.layout.activity_main_fragment, container, false);
 
         // Text View that is word
         TextView tv_Word = view.findViewById(R.id.tv_Word);
         tv_Word.setText(m_WordsList.get_m_Word());
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_Bottom_Sheet_List);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_Fragment_List);
         recyclerView.setLayoutManager(new LinearLayoutManager(m_Context));
         recyclerView.setAdapter(adapter);
 

@@ -1,6 +1,5 @@
 package com.hoonydictionary.mydictionary.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hoonydictionary.mydictionary.R;
-import com.hoonydictionary.mydictionary.itemdata.WordsList;
 
 import java.util.ArrayList;
 
-public class BottomSheetDialogAdapter extends RecyclerView.Adapter<BottomSheetDialogAdapter.ItemViewHolder> {
+public class FragmentRecyclerViewAdapter extends RecyclerView.Adapter<FragmentRecyclerViewAdapter.ItemViewHolder>  {
 
     private final ArrayList<String> m_MeanList;
     private final ArrayList<String> m_POSList;
 
-    public BottomSheetDialogAdapter(ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
+    public FragmentRecyclerViewAdapter(ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
 
         this.m_MeanList = m_ArrayListMean;
         this.m_POSList = m_ArrayListPOS;
@@ -27,18 +25,18 @@ public class BottomSheetDialogAdapter extends RecyclerView.Adapter<BottomSheetDi
 
     @NonNull
     @Override
-    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FragmentRecyclerViewAdapter.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.rv_bottom_sheet_dialog_pos_mean,
+                R.layout.rv_fragment_pos_mean,
                 parent,
                 false
         );
-        return new ItemViewHolder(view);
+        return new FragmentRecyclerViewAdapter.ItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FragmentRecyclerViewAdapter.ItemViewHolder holder, int position) {
 
         holder.onBind(m_MeanList.get(position), m_POSList.get(position));
     }

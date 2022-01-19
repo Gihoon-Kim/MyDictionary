@@ -2,8 +2,7 @@ package com.hoonydictionary.mydictionary.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +26,8 @@ import com.hoonydictionary.mydictionary.adapter.MainActivityRecyclerViewAdapter;
 import com.hoonydictionary.mydictionary.database.DBHelper;
 import com.hoonydictionary.mydictionary.dialog.AddNewWordDialog;
 import com.hoonydictionary.mydictionary.dialog.DeveloperInfoDialog;
+import com.hoonydictionary.mydictionary.fragment.MainFragment;
+import com.hoonydictionary.mydictionary.interfaces.OnItemClick;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
 
 import java.util.ArrayList;
@@ -36,11 +38,11 @@ import butterknife.ButterKnife;
 /*
 This activity is for showing words and basic widgets such as menu and recycler view
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClick {
 
     private final static String TAG = "MainActivity";
 
-    private final int m_DATABASE_VERSION = 1;
+    private final static int m_DATABASE_VERSION = 1;
     // Views
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rvMainWords)
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         // Setting RecyclerView
         // Adapter for RecyclerView(rvMainWords)
         fragmentManager = getSupportFragmentManager();
-        mainActivityRecyclerViewAdapter = new MainActivityRecyclerViewAdapter(m_WordsArrayList, getApplicationContext(), fragmentManager);
+        mainActivityRecyclerViewAdapter = new MainActivityRecyclerViewAdapter(m_WordsArrayList, getApplicationContext(), fragmentManager, this);
         rvMainWords.setLayoutManager(new LinearLayoutManager(this));
         rvMainWords.setAdapter(mainActivityRecyclerViewAdapter);
 
@@ -139,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (m_NumCheckedBox == 0) {
 
-                    Toast.makeText(this, "An word is not selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Words are not selected", Toast.LENGTH_SHORT).show();
                 } else {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -152,10 +154,14 @@ public class MainActivity extends AppCompatActivity {
                             // Delete Item from Database
                             database.execSQL(
                                     "DELETE " +
-                                    "FROM WORDS " +
-                                    "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
-                            // Delete Item from List
-                            m_WordsArrayList.remove(m_WordsArrayList.get(m_Position.get(itemCount - 1)));
+                                        "FROM WORDS " +
+                                        "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
+                            database.execSQL(
+                                    "DELETE " +
+                                            "FROM MEANS " +
+                                            "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
+                            // Delete Item from Adapter
+                            mainActivityRecyclerViewAdapter.removeWord(m_Position.get(itemCount - 1));
                         }
 
                         mainActivityRecyclerViewAdapter.notifyDataSetChanged();
@@ -186,5 +192,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onClickItem(Context m_Context, WordsList wordsList, ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction;
+
+        // Fragment for device size are big (tab)
+        MainFragment mainFragment = new MainFragment(
+                m_Context,
+                wordsList,
+                m_ArrayListPOS,
+                m_ArrayListMean
+        );
+
+        transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, 0);
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.frameLayout, mainFragment);
+        transaction.commit();
     }
 }

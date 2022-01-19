@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.NdefMessage;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +18,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.hoonydictionary.mydictionary.R;
 import com.hoonydictionary.mydictionary.database.DBHelper;
 import com.hoonydictionary.mydictionary.dialog.WordBottomSheetDialog;
+import com.hoonydictionary.mydictionary.interfaces.OnItemClick;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
 
 import java.util.ArrayList;
@@ -36,11 +40,15 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     private final Context m_Context;
     private final FragmentManager fragmentManager;
 
-    public MainActivityRecyclerViewAdapter(ArrayList<WordsList> m_WordsArrayList, Context m_Context, FragmentManager fragmentManager) {
+    // interface Item Click Listener
+    private OnItemClick m_Callback;
+
+    public MainActivityRecyclerViewAdapter(ArrayList<WordsList> m_WordsArrayList, Context m_Context, FragmentManager fragmentManager, OnItemClick listener) {
 
         this.itemList = m_WordsArrayList;
         this.m_Context = m_Context;
         this.fragmentManager = fragmentManager;
+        this.m_Callback = listener;
     }
 
     @NonNull
@@ -128,7 +136,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
                     WordsList wordsList = itemList.get(pos);
 
-                    // TODO : GET DATA THAT COLUMN WORD IS MATCHED FROM MEANS DATABASE
+                    // GET DATA THAT COLUMN "WORD" IS MATCHED FROM MEANS DATABASE
                     dbHelper = new DBHelper(
                             m_Context,
                             "WORDS.db",
@@ -154,14 +162,26 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                         m_ArrayListMean.add(m_Cursor.getString(1));
                     }
 
-                    // Bottom Sheet Dialog
-                    WordBottomSheetDialog wordBottomSheetDialog = new WordBottomSheetDialog(
-                            m_Context,
-                            wordsList,
-                            m_ArrayListPOS,
-                            m_ArrayListMean
-                    );
-                    wordBottomSheetDialog.show(fragmentManager, "Bottom Sheet");
+                    DisplayMetrics metrics = m_Context.getResources().getDisplayMetrics();
+
+                    if (metrics.widthPixels < 1500) {
+                        // Bottom Sheet Dialog
+                        WordBottomSheetDialog wordBottomSheetDialog = new WordBottomSheetDialog(
+                                m_Context,
+                                wordsList,
+                                m_ArrayListPOS,
+                                m_ArrayListMean
+                        );
+                        wordBottomSheetDialog.show(fragmentManager, "Bottom Sheet");
+                    } else {
+
+                        m_Callback.onClickItem(
+                                m_Context,
+                                wordsList,
+                                m_ArrayListPOS,
+                                m_ArrayListMean
+                        );
+                    }
                 }
             };
         }

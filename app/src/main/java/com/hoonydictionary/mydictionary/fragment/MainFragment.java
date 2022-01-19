@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hoonydictionary.mydictionary.R;
-import com.hoonydictionary.mydictionary.adapter.BottomSheetDialogAdapter;
 import com.hoonydictionary.mydictionary.adapter.FragmentRecyclerViewAdapter;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
 
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 
 public class MainFragment extends Fragment {
 
-    private Context m_Context;
-    private WordsList m_WordsList;
-    private ArrayList<String> m_ArrayListPOS;
-    private ArrayList<String> m_ArrayListMean;
+    private final Context m_Context;
+    private final WordsList m_WordsList;
+    private final ArrayList<String> m_ArrayListPOS;
+    private final ArrayList<String> m_ArrayListMean;
 
     public MainFragment(Context context, WordsList wordsList, ArrayList<String> m_ArrayListPOS, ArrayList<String> m_ArrayListMean) {
 

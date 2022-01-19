@@ -4,24 +4,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.NdefMessage;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.hoonydictionary.mydictionary.R;
 import com.hoonydictionary.mydictionary.database.DBHelper;
 import com.hoonydictionary.mydictionary.dialog.WordBottomSheetDialog;
@@ -41,7 +35,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     private final FragmentManager fragmentManager;
 
     // interface Item Click Listener
-    private OnItemClick m_Callback;
+    private final OnItemClick m_Callback;
 
     public MainActivityRecyclerViewAdapter(ArrayList<WordsList> m_WordsArrayList, Context m_Context, FragmentManager fragmentManager, OnItemClick listener) {
 
@@ -75,10 +69,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         // Get check value through getter of the model class, then set this value through setter into checkbox of an item
         holder.cb_CheckBox.setChecked(wordsList.getChecked());
         // Attach a listener to find out the status of the check box.
-        holder.cb_CheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
-
-            wordsList.setChecked(b);
-        });
+        holder.cb_CheckBox.setOnCheckedChangeListener((compoundButton, b) -> wordsList.setChecked(b));
         // Show item one by one
         holder.onBind(itemList.get(position));
     }
@@ -110,13 +101,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
             // Click Event for Recycler View
             itemView.setOnClickListener(onAdapterItemClickListener());
-            cb_CheckBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    cb_CheckBox.setChecked(cb_CheckBox.isChecked());
-                }
-            });
+            cb_CheckBox.setOnClickListener(view -> cb_CheckBox.setChecked(cb_CheckBox.isChecked()));
         }
 
         void onBind(WordsList wordsList) {

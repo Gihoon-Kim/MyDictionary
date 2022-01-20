@@ -93,8 +93,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
         // Get data from database through SELECT Query
         String m_SelectQuery =
                 "SELECT * " +
-                "FROM WORDS;";
-        @SuppressLint("Recycle") Cursor m_Cursor = database.rawQuery(m_SelectQuery, null);
+                    "FROM WORDS;";
+        @SuppressLint("Recycle") Cursor m_Cursor = database.rawQuery(
+                m_SelectQuery,
+                null
+        );
         while(m_Cursor.moveToNext()) {
 
             Log.i(TAG, m_Cursor.getString(1));
@@ -102,7 +105,25 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
             m_WordsArrayList.add(wordsList);
             mainActivityRecyclerViewAdapter.notifyDataSetChanged();
         }
+        // Get options from database through SELECT Query
+        String m_SelectOptionQuery =
+                "SELECT * " +
+                    "FROM OPTIONS;";
+        @SuppressLint("Recycle") Cursor m_OptionCursor = database.rawQuery(
+                m_SelectOptionQuery,
+                null
+        );
+        while(m_OptionCursor.moveToNext()) {
 
+            for (int i = 0; i < m_WordsArrayList.size(); i++) {
+
+                m_WordsArrayList.get(i).set_m_Color(Integer.parseInt(m_OptionCursor.getString(1)));
+                m_WordsArrayList.get(i).set_m_Text_Size(Integer.parseInt(m_OptionCursor.getString(2)));
+            }
+            parentLayout.setBackgroundColor(Integer.parseInt(m_OptionCursor.getString(3)));
+        }
+
+        // TODO : SET DEFAULT VALUE OF TEXT SIZE, TEXT COLOR, AND BACKGROUND COLOR
         m_Cursor.close();
     }
 
@@ -175,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                 }
+                return true;
             case R.id.menuItemSetting:
 
                 SettingDialog settingDialog = new SettingDialog(this, mainActivityRecyclerViewAdapter, parentLayout);

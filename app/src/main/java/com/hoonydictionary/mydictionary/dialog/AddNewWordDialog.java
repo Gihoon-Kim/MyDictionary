@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.View;
@@ -134,15 +135,26 @@ public class AddNewWordDialog {
     private View.OnClickListener onClickAddNewWord(SQLiteDatabase database, Dialog dialog) {
 
         return view -> {
-            // TODO : put data into database and ArrayList of the Main Activity
 
             // Content for database Words
             ContentValues contentValuesForWord = new ContentValues();
             contentValuesForWord.put("word", ((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
             database.insert("WORDS", null, contentValuesForWord);
             WordsList newWord = new WordsList(((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
-            newWord.set_m_Text_Size(m_WordsArrayList.get(0).get_m_Text_Size());
-            newWord.set_m_Color(m_WordsArrayList.get(0).get_m_Color());
+
+            // Set first option
+            String m_SelectOptionQuery =
+                    "SELECT * " +
+                            "FROM OPTIONS;";
+            @SuppressLint("Recycle") Cursor m_OptionCursor = database.rawQuery(
+                    m_SelectOptionQuery,
+                    null
+            );
+            while(m_OptionCursor.moveToNext()) {
+
+                newWord.set_m_Text_Size(Integer.parseInt(m_OptionCursor.getString(2)));
+                newWord.set_m_Color(Integer.parseInt(m_OptionCursor.getString(1)));
+            }
             m_WordsArrayList.add(newWord);
 
             // Content for database Means

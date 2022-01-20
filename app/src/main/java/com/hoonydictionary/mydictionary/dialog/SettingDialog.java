@@ -1,7 +1,9 @@
 package com.hoonydictionary.mydictionary.dialog;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.view.View;
 import android.view.Window;
@@ -14,11 +16,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.hoonydictionary.mydictionary.R;
 import com.hoonydictionary.mydictionary.adapter.MainActivityRecyclerViewAdapter;
+import com.hoonydictionary.mydictionary.database.DBHelper;
 
 /*
 This dialog is to set text size, text color, and background color
  */
 public class SettingDialog {
+
+    private final static int m_DATABASE_VERSION = 1;
 
     private final Context m_Context;
     private final MainActivityRecyclerViewAdapter m_MainActivityRecyclerViewAdapter;
@@ -30,6 +35,8 @@ public class SettingDialog {
     private Spinner m_Spinner_Background_Color;
 
     Dialog dialog;
+    DBHelper dbHelper;
+    SQLiteDatabase database;
 
     public SettingDialog(Context m_Context, MainActivityRecyclerViewAdapter mainActivityRecyclerViewAdapter, ConstraintLayout parentLayout) {
 
@@ -41,6 +48,10 @@ public class SettingDialog {
     public void CallDialog() {
 
         dialog = new Dialog(m_Context);
+
+        dbHelper = new DBHelper(m_Context, "WORDS.db", null, m_DATABASE_VERSION);
+        database = dbHelper.getWritableDatabase();
+        dbHelper.onCreate(database);
 
         // Hide Dialog's Title Bar
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -133,26 +144,40 @@ public class SettingDialog {
             m_MainActivityRecyclerViewAdapter.notifyDataSetChanged();
 
             // Background Color and Apply
+            int m_Background_Color;
             selectedItem = m_Spinner_Background_Color.getSelectedItem().toString();
             switch (selectedItem) {
                 case "Red":
-                    m_Color = Color.RED;
+                    m_Background_Color = Color.RED;
                     break;
                 case "Blue":
-                    m_Color = Color.BLUE;
+                    m_Background_Color = Color.BLUE;
                     break;
                 case "Green":
-                    m_Color = Color.GREEN;
+                    m_Background_Color = Color.GREEN;
                     break;
                 case "White":
-                    m_Color = Color.WHITE;
+                    m_Background_Color = Color.WHITE;
                     break;
                 default:
-                    m_Color = Color.BLACK;
+                    m_Background_Color = Color.BLACK;
                     break;
             }
-            m_Layout.setBackgroundColor(m_Color);
+            m_Layout.setBackgroundColor(m_Background_Color);
 
+            // TODO : SAVE ON DATABASE SETTING OPTIONS TO KEEP OPTIONS WHEN THE APPLICATION RESTART
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("TextColor", m_Color);
+            contentValues.put("TextSize", m_Size);
+            contentValues.put("BackgroundColor", m_Background_Color);
+
+            String insertOrReplaceQuery = "INSERT OR REPLACE INTO OPTIONS (_id, TextColor, TextSize, BackgroundColor) "
+                    + "VALUES ("
+                    + 1 + ", "
+                    + m_Color + ", "
+                    + m_Size + ", "
+                    + m_Background_Color + ");";
+            database.execSQL(insertOrReplaceQuery);
             dialog.dismiss();
         };
     }

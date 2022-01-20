@@ -26,8 +26,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "pos text,"
                 + "mean text,"
                 + "word text);";
+
+        // Setting Table to save options of setting (Text Size, Text Color, and Background Color)
+        String createOptionTable = "CREATE TABLE IF NOT EXISTS OPTIONS ("
+                + "_id integer PRIMARY KEY AUTOINCREMENT,"
+                + "TextColor text,"
+                + "TextSize int,"
+                + "BackgroundColor text);";
         sqLiteDatabase.execSQL(createMEANTable);
         sqLiteDatabase.execSQL(createWORDTable);
+        sqLiteDatabase.execSQL(createOptionTable);
     }
 
     @Override

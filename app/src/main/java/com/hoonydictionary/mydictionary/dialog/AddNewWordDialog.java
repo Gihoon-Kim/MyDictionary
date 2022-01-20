@@ -141,6 +141,8 @@ public class AddNewWordDialog {
             contentValuesForWord.put("word", ((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
             database.insert("WORDS", null, contentValuesForWord);
             WordsList newWord = new WordsList(((EditText) dialog.findViewById(R.id.et_Word)).getText().toString());
+            newWord.set_m_Text_Size(m_WordsArrayList.get(0).get_m_Text_Size());
+            newWord.set_m_Color(m_WordsArrayList.get(0).get_m_Color());
             m_WordsArrayList.add(newWord);
 
             // Content for database Means

@@ -13,6 +13,10 @@
     <string name="parts_of_speech">Parts of Speech</string>
     <string name="meaning">Meaning</string>
     <string name="add_new_word">Add New Word</string>
-    <string name="cancel">Cancel</string>
     <string name="delete_word">Delete Word</string>
+    <string name="text_size">Text Size</string>
+    <string name="text_color">Text Color</string>
+    <string name="background_color">Background Color</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.hoonydictionary.mydictionary.adapter.MainActivityRecyclerViewAdapter;
 import com.hoonydictionary.mydictionary.database.DBHelper;
 import com.hoonydictionary.mydictionary.dialog.AddNewWordDialog;
 import com.hoonydictionary.mydictionary.dialog.DeveloperInfoDialog;
+import com.hoonydictionary.mydictionary.dialog.SettingDialog;
 import com.hoonydictionary.mydictionary.fragment.MainFragment;
 import com.hoonydictionary.mydictionary.interfaces.OnItemClick;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rvMainWords)
     RecyclerView rvMainWords;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.parentLayout)
+    ConstraintLayout parentLayout;
 
     Toolbar newToolBar;
 
@@ -172,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
                 }
             case R.id.menuItemSetting:
 
-                // TODO : set click event for menu Item : Setting
+                SettingDialog settingDialog = new SettingDialog(this, mainActivityRecyclerViewAdapter, parentLayout);
+                settingDialog.CallDialog();
                 return true;
             default:
 

@@ -88,6 +88,22 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         notifyDataSetChanged();
     }
 
+    public void setTextColor(int m_Color) {
+
+        for (int i = 0; i < itemList.size(); i++) {
+
+            itemList.get(i).set_m_Color(m_Color);
+        }
+    }
+
+    public void setTextSize(int m_Size) {
+
+        for (int i = 0; i < itemList.size(); i++) {
+
+            itemList.get(i).set_m_Text_Size(m_Size);
+        }
+    }
+
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tv_Word;
@@ -107,6 +123,8 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         void onBind(WordsList wordsList) {
 
             tv_Word.setText(wordsList.get_m_Word());
+            tv_Word.setTextColor(wordsList.get_m_Color());
+            tv_Word.setTextSize(wordsList.get_m_Text_Size());
         }
 
         private View.OnClickListener onAdapterItemClickListener() {

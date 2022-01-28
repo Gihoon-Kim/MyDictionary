@@ -9,5 +9,6 @@
         <item> preposition </item>
         <item> conjunction </item>
         <item> interjection </item>
+        <item> Other </item>
     </string-array>
 </resources>

@@ -28,6 +28,7 @@ import com.hoonydictionary.mydictionary.database.DBHelper;
 import com.hoonydictionary.mydictionary.dialog.AddNewWordDialog;
 import com.hoonydictionary.mydictionary.dialog.DeveloperInfoDialog;
 import com.hoonydictionary.mydictionary.dialog.SettingDialog;
+import com.hoonydictionary.mydictionary.dialog.WordGameDialog;
 import com.hoonydictionary.mydictionary.fragment.MainFragment;
 import com.hoonydictionary.mydictionary.interfaces.OnItemClick;
 import com.hoonydictionary.mydictionary.itemdata.WordsList;
@@ -152,61 +153,77 @@ public class MainActivity extends AppCompatActivity implements OnItemClick {
                 return true;
 
             case R.id.menuItemDeleteWord:
+                onMenuItemDeleteWordSelected();
 
-                // to get positions of checked items
-                ArrayList<Integer> m_Position = new ArrayList<>();
-                int m_NumCheckedBox = 0;
-                for (int i = 0; i < m_WordsArrayList.size(); i++) {
-
-                    if (m_WordsArrayList.get(i).getChecked()) {
-
-                        m_Position.add(i);
-                        m_NumCheckedBox++;
-                    }
-                }
-
-                if (m_NumCheckedBox == 0) {
-
-                    Toast.makeText(this, "Words are not selected", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Delete Words").setMessage("Do you really want to delete " + m_NumCheckedBox + "Words?");
-                    int final_m_NumCheckedBox = m_NumCheckedBox;
-                    builder.setPositiveButton("Yes", (dialogInterface, i) -> {
-
-                        for (int itemCount = final_m_NumCheckedBox; itemCount > 0; itemCount--) {
-
-                            // Delete Item from Database
-                            database.execSQL(
-                                    "DELETE " +
-                                        "FROM WORDS " +
-                                        "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
-                            database.execSQL(
-                                    "DELETE " +
-                                            "FROM MEANS " +
-                                            "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
-                            // Delete Item from Adapter
-                            mainActivityRecyclerViewAdapter.removeWord(m_Position.get(itemCount - 1));
-                        }
-
-                        mainActivityRecyclerViewAdapter.notifyDataSetChanged();
-                    }).setNegativeButton("Cancel", null);
-
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                }
                 return true;
             case R.id.menuItemSetting:
 
                 SettingDialog settingDialog = new SettingDialog(this, mainActivityRecyclerViewAdapter, parentLayout);
                 settingDialog.CallDialog();
                 return true;
+
+            case R.id.menuItemGame:
+
+                if (m_WordsArrayList.size() >= 10) {
+
+                    WordGameDialog wordGameDialog = new WordGameDialog(this);
+                    wordGameDialog.CallDialog();
+                } else {
+
+                    Toast.makeText(this, "At least 10 words required", Toast.LENGTH_SHORT).show();
+                }
+                return true;
             default:
 
                 DeveloperInfoDialog developerInfoDialog = new DeveloperInfoDialog(this);
                 developerInfoDialog.CallDialog();
                 return true;
+        }
+    }
+
+    private void onMenuItemDeleteWordSelected() {
+        // to get positions of checked items
+        ArrayList<Integer> m_Position = new ArrayList<>();
+        int m_NumCheckedBox = 0;
+        for (int i = 0; i < m_WordsArrayList.size(); i++) {
+
+            if (m_WordsArrayList.get(i).getChecked()) {
+
+                m_Position.add(i);
+                m_NumCheckedBox++;
+            }
+        }
+
+        if (m_NumCheckedBox == 0) {
+
+            Toast.makeText(this, "There is not selected words", Toast.LENGTH_SHORT).show();
+        } else {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Delete Words").setMessage("Do you really want to delete " + m_NumCheckedBox + "Words?");
+            int final_m_NumCheckedBox = m_NumCheckedBox;
+            builder.setPositiveButton("Yes", (dialogInterface, i) -> {
+
+                for (int itemCount = final_m_NumCheckedBox; itemCount > 0; itemCount--) {
+
+                    // Delete Item from Database
+                    database.execSQL(
+                            "DELETE " +
+                                "FROM WORDS " +
+                                "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
+                    database.execSQL(
+                            "DELETE " +
+                                    "FROM MEANS " +
+                                    "WHERE word = '" + m_WordsArrayList.get(m_Position.get(itemCount - 1)).get_m_Word() + "'");
+                    // Delete Item from Adapter
+                    mainActivityRecyclerViewAdapter.removeWord(m_Position.get(itemCount - 1));
+                }
+
+                mainActivityRecyclerViewAdapter.notifyDataSetChanged();
+            }).setNegativeButton("Cancel", null);
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 

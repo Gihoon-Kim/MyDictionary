@@ -11,7 +11,7 @@
         android:theme="@style/Theme.MyDictionary">
         <activity android:name=".activity.MainActivity"
             android:configChanges="screenSize|orientation"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -17,4 +17,8 @@
     <item
         android:id="@+id/menuItemDeveloperInfo"
         android:title="@string/developer_info" />
+
+    <item
+        android:id="@+id/menuItemGame"
+        android:title="@string/play_game" />
 </menu>
